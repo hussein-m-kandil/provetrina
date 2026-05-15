@@ -1,0 +1,62 @@
+@let _header = header();
+@let _subheader = subheader();
+@let _headerHref = headerHref();
+@let _editable = editable();
+
+<h4 class="**:align-baseline w-full flex flex-wrap items-baseline">
+  <span>
+    <span class="text-xl font-bold text-primary">
+      @if (_headerHref) {
+      <a [href]="_headerHref" class="cursor-pointer hover:underline"
+         onclick="return window.confirm('You are visiting an external website! Proceed only if you trust this URL: ' + this.href);">{{ _header }}</a>
+      } @else {
+      {{ _header }}
+      }
+    </span>
+    <span class="text-muted-color-emphasis">
+      {{ _subheader }}
+    </span>
+  </span>
+  @if (_editable) {
+  <p-button text rounded [size]="'small'" [severity]="'secondary'"
+            [icon]="'pi pi-trash'" [ariaLabel]="'Delete ${_header}'"
+            [loading]="deleting()" (onClick)="deleteEntry()" />
+  }
+</h4>
+
+@if (startDate(); as _start_date) {
+<div class="text-xs text-muted-color font-light uppercase">
+  <time [attr.datetime]="_start_date">
+    {{ _start_date | date:'MMMM y' }}
+  </time>
+  <span> - </span>
+  @if (endDate(); as _end_date) {
+  <time [attr.datetime]="_end_date">
+    {{ _end_date | date:'MMMM y' }}
+  </time>
+  } @else {
+  <span>Present</span>
+  }
+  @if (location(); as _location) {
+  <span class="*:align-middle">
+    <span class="mx-2"> | </span>
+    <span class="pi pi-map-marker text-sm"></span>
+    <span> {{ _location }}</span>
+  </span>
+  }
+</div>
+}
+
+@if (summary(); as _summary) {
+<p class="text-sm text-muted-color-emphasis font-normal mt-4">
+  {{ _summary }}
+</p>
+}
+
+@if (keywords(); as _keywords) {
+<p class="space-x-2 mt-1">
+  @for (_kw of _keywords.split(','); track $index) {
+  <p-badge [size]="'small'" [severity]="'secondary'" [value]="_kw" />
+  }
+</p>
+}

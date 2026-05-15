@@ -1,0 +1,115 @@
+@let _editing = !!profile();
+
+<form class="space-y-6" [formGroup]="form" (ngSubmit)="submit()"
+      aria-labelledby="account-form-label">
+  <h2 id="account-form-label"
+      class="text-center text-3xl font-semibold text-color leading-tight tracking-wider"
+      [class]="{ 'text-muted-color': form.disabled }">
+    {{ _editing ? 'Edit' : 'Create' }} Profile
+  </h2>
+
+  @if (form.errors?.['nonFieldError']; as _nonFieldError) {
+  <p-message severity="error" size="small" variant="simple"
+             styleClass="justify-center">
+    {{ _nonFieldError }}
+  </p-message>
+  }
+
+  <div class="space-y-4">
+    <ng-container [ngTemplateOutlet]="field" [ngTemplateOutletContext]="{
+          control: form.controls.name,
+          type: 'text',
+          id: 'name',
+          label: 'Name',
+        }" />
+    <ng-container [ngTemplateOutlet]="field" [ngTemplateOutletContext]="{
+          control: form.controls.title,
+          type: 'text',
+          id: 'title',
+          label: 'Title (position)',
+        }" />
+    <ng-container [ngTemplateOutlet]="field" [ngTemplateOutletContext]="{
+          control: form.controls.email,
+          type: 'email',
+          id: 'email',
+          label: 'Email',
+        }" />
+    <ng-container [ngTemplateOutlet]="field" [ngTemplateOutletContext]="{
+          control: form.controls.tel,
+          type: 'tel',
+          id: 'tel',
+          label: 'Tel',
+        }" />
+    <ng-container [ngTemplateOutlet]="field" [ngTemplateOutletContext]="{
+          control: form.controls.location,
+          type: 'text',
+          id: 'location',
+          label: 'Location',
+        }" />
+    <ng-container [ngTemplateOutlet]="field" [ngTemplateOutletContext]="{
+          control: form.controls.bio,
+          type: 'textarea',
+          id: 'bio',
+          label: 'Bio',
+        }" />
+    <ng-container [ngTemplateOutlet]="field" [ngTemplateOutletContext]="{
+          control: form.controls.public,
+          type: 'checkbox',
+          id: 'public',
+          label: 'Public',
+        }" />
+  </div>
+
+  @let _disabled = form.disabled;
+  <div>
+    <p-button fluid type="submit" severity="primary" label="Save"
+              [loading]="_disabled" [disabled]="_disabled" />
+  </div>
+  <div>
+    <p-button fluid type="button" severity="secondary" label="Cancel"
+              [disabled]="_disabled" (onClick)="canceled.emit()" />
+  </div>
+</form>
+
+<!-- Templates -->
+
+<ng-template #field let-fieldId="id" let-fieldType="type"
+             let-fieldLabel="label" let-fieldControl="control"
+             let-fieldHidden="hidden">
+  @let _invalid = fieldControl.invalid && fieldControl.dirty;
+  <div>
+    @if (fieldType === 'checkbox') {
+    <div class="flex items-center justify-center space-x-2 **:leading-0">
+      <p-checkbox [formControl]="fieldControl" [inputId]="fieldId"
+                  [invalid]="_invalid" [aria-invalid]="_invalid"
+                  [binary]="true" />
+      <label [for]="fieldId"
+             class="font-semibold text-muted-color">{{ fieldLabel }}</label>
+    </div>
+    } @else {
+    <p-float-label variant="on" class="block relative">
+      <label for="{{ fieldId }}">{{ fieldLabel }}</label>
+      @if (fieldType === 'textarea') {
+      <textarea pTextarea fluid id="{{ fieldId }}" [autoResize]="true"
+                [invalid]="_invalid" [aria-invalid]="_invalid"
+                [formControl]="fieldControl"
+                class="p-3 text-sm font-semibold tracking-wider"></textarea>
+      } @else {
+      <input pInputText fluid id="{{ fieldId }}" [formControl]="fieldControl"
+             [invalid]="_invalid" [aria-invalid]="_invalid" [type]="'text'"
+             class="p-3 pe-9 text-sm font-semibold tracking-wider"
+             autocomplete="off" />
+      }
+    </p-float-label>
+    }
+    @if (_invalid) {
+    <p-message severity="error" size="small" variant="simple">
+      @if (fieldControl.getError('required')) {
+      <span>{{ fieldLabel }} is required.</span>
+      }@else if (fieldControl.getError('validation'); as _validationError) {
+      <span>{{ _validationError }}</span>
+      }
+    </p-message>
+    }
+  </div>
+</ng-template>

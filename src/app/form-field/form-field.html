@@ -1,0 +1,45 @@
+@let _control = control();
+@let _label = label();
+@let _id = inputId();
+@let _type = type();
+
+@let _invalid = _control.invalid && _control.dirty;
+
+<div>
+  @if (_type === 'checkbox') {
+  <div class="flex items-center justify-center space-x-2 **:leading-0">
+    <p-checkbox [formControl]="_control" [inputId]="_id" [invalid]="_invalid"
+                [aria-invalid]="_invalid" [binary]="true" />
+    <label [for]="_id"
+           class="font-semibold text-muted-color">{{ _label }}</label>
+  </div>
+  } @else {
+  <p-float-label variant="on" class="block relative font-semibold">
+    @if (_type === 'date') {
+    <p-datepicker fluid [inputId]="_id" [formControl]="_control"
+                  [invalid]="_invalid" [aria-invalid]="_invalid"
+                  [iconDisplay]="'input'" [showIcon]="true" />
+    } @else if (_type === 'textarea') {
+    <textarea pTextarea fluid id="{{ _id }}" [autoResize]="true"
+              [invalid]="_invalid" [aria-invalid]="_invalid"
+              [formControl]="_control" class="p-3"></textarea>
+    } @else {
+    <input pInputText fluid id="{{ _id }}" [formControl]="_control"
+           [invalid]="_invalid" [aria-invalid]="_invalid" [type]="'text'"
+           class="p-3" autocomplete="off" />
+    }
+    <label for="{{ _id }}">{{ _label }}</label>
+  </p-float-label>
+  }
+  @if (_invalid) {
+  <p-message severity="error" size="small" variant="simple">
+    @if (_control.getError('required')) {
+    {{ _label }} is required.
+    } @else if (_control.getError('validation'); as _validationError) {
+    {{ _validationError }}
+    } @else if (getErrors()?.[0]; as _error) {
+    {{ _error }}
+    }
+  </p-message>
+  }
+</div>

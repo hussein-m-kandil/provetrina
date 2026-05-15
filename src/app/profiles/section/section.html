@@ -1,0 +1,56 @@
+@let _profileId = profileId();
+@let _editable = editable();
+@let _section = section();
+@let _header = header();
+@let _adding = adding();
+
+<div class="space-y-4">
+  <div class="flex justify-between items-center">
+    <h3 class="text-2xl font-bold">
+      {{ _header }}
+    </h3>
+    <!-- esc --> @if (_editable && _section.entries.length < 7) { <!-- esc -->
+    <p-button [size]="'small'" [severity]="'secondary'"
+              [ariaLabel]="`Add to ${_header}`" [icon]="'pi pi-plus'"
+              (onClick)="toggleAdding()" />
+    }
+  </div>
+  @if (_editable && _adding) {
+  <div>
+    <app-section-form [profileId]="_profileId" [slug]="_section.slug"
+                      [order]="getNextOrder(_section.entries)"
+                      (canceled)="toggleAdding()"
+                      (succeeded)="added.emit($event); toggleAdding()" />
+  </div>
+  }
+  <app-list-loader [loading]="_section.loading" [loadError]="_section.error"
+                   [pluralLabel]="_header">
+    <div [class]="{'ps-8': !_editable}">
+      @if (_editable) {
+      <p-orderlist [value]="_section.entries" [dataKey]="'id'"
+                   [dragdrop]="true" [responsive]="true" [breakpoint]="'575px'"
+                   [scrollHeight]="'20rem'" (onReorder)="reordered.emit()"
+                   [pt]="{ pcListbox: { root: 'border-surface! border', list: 'p-0' } }">
+        <ng-template #item let-_entry>
+          <ng-container [ngTemplateOutlet]="entryFragment()"
+                        [ngTemplateOutletContext]="{ $implicit: _entry }" />
+        </ng-template>
+        <ng-template #empty>
+          <p class="text-sm text-muted-color font-italic">
+            <em>Empty sections are not visible to the public.</em>
+          </p>
+        </ng-template>
+      </p-orderlist>
+      } @else {
+      <ul class="space-y-2">
+        @for (_entry of _section.entries; track $index) {
+        <li>
+          <ng-container [ngTemplateOutlet]="entryFragment()"
+                        [ngTemplateOutletContext]="{ $implicit: _entry }" />
+        </li>
+        }
+      </ul>
+      }
+    </div>
+  </app-list-loader>
+</div>

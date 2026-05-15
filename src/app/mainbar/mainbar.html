@@ -1,0 +1,48 @@
+@let _authenticated = accounts.authenticated();
+@let _user = accounts.user();
+
+<div #container class="h-14 print:hidden">
+  <div
+       class="fixed top-0 left-0 w-full z-30 bg-primary flex flex-wrap justify-center items-center p-2">
+    <h1 class="text-primary-contrast text-3xl text-center font-bold ps-3">
+      <a [routerLink]="['/']">{{ title }}</a>
+    </h1>
+    <nav class="ms-auto max-[20rem]:me-auto">
+      <ul class="flex items-center *:leading-0 **:[button]:**:leading-0!">
+        <li>
+          @let _selectedScheme = colorScheme.selectedScheme();
+          <button pButton pRipple rounded type="button"
+                  [icon]="_selectedScheme.icon" [title]="_selectedScheme.value"
+                  aria-label="Change the {{ _selectedScheme.value }} color scheme."
+                  (click)="colorScheme.switch()"></button>
+        </li>
+        @if (_authenticated) {
+        @if (_user) {
+        <li>
+          <a pButton pRipple rounded [icon]="'pi pi-user'"
+             [routerLink]="['/', _user.username]" aria-label="Profile"></a>
+        </li>
+        }
+        <li>
+          <a pButton pRipple rounded [icon]="'pi pi-cog'"
+             [routerLink]="['/account']" aria-label="Account"></a>
+        </li>
+        <li>
+          <button pButton pRipple rounded [icon]="'pi pi-sign-out'"
+                  type="button" (click)="signOut()"
+                  aria-label="Sign Out"></button>
+        </li>
+        } @else {
+        <li>
+          <a pButton pRipple rounded [icon]="'pi pi-sign-in'"
+             [routerLink]="['/signin']" aria-label="Sign In"></a>
+        </li>
+        <li>
+          <a pButton pRipple rounded [icon]="'pi pi-user-plus'"
+             [routerLink]="['/signup']" aria-label="Sign Up"></a>
+        </li>
+        }
+      </ul>
+    </nav>
+  </div>
+</div>

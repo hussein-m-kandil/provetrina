@@ -1,0 +1,24 @@
+@let _hasMore = hasMore();
+@let _loading = loading();
+@let _loadError = loadError();
+@let _suffix = listSize() ? ' more' : '';
+
+@if (!_loading && !_loadError) {
+<ng-content />
+}
+
+@if (_loading || _loadError || _hasMore) {
+<div class="*:block *:w-full text-center">
+  @if(_loading) {
+  <app-spinner
+               [ariaLabel]="`Loading${_suffix} ${pluralLabel().toLowerCase()}...`" />
+  } @else if (_loadError) {
+  <app-error-message [message]="_loadError" (retry)="loaded.emit()" />
+  } @else {
+  <div #intersector class="text-center **:font-normal">
+    <p-button link type="button" size="small" label="Load{{ _suffix }}"
+              (onClick)="loaded.emit()" styleClass="py-0 px-1" />
+  </div>
+  }
+</div>
+}

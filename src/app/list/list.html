@@ -1,0 +1,43 @@
+@let _store = store();
+@let _storeList = _store.list();
+@let _pluralLabel = pluralLabel();
+
+<div class="relative size-full overflow-auto flex flex-col">
+  @if (searchable()) {
+  <div class="relative">
+    @let _searchLabel = searchLabel() || 'Search';
+    <input #searchBox pInputText fluid pSize="small" id="profiles-search-box"
+           placeholder="{{_searchLabel}}" aria-label="{{_searchLabel}}"
+           class="shadow-none rounded-none pe-9 text-center"
+           [value]="searchValue()"
+           (input)="searched.emit($event.target.value)" />
+    <span class="absolute top-1/2 right-0.5 transform-[translateY(-50%)]">
+      @if (searchBox.value) {
+      <button pButton pRipple text outlined rounded type="submit" size="small"
+              severity="secondary" aria-label="Clear search"
+              icon="pi pi-times-circle"
+              (click)="(searchBox.value = ''); searched.emit('')"></button>
+      } @else {
+      <span class="pi pi-search text-muted-color text-xs p-3"></span>
+      }
+    </span>
+  </div>
+  }
+  @if (_storeList.length) {
+  <ng-container [ngTemplateOutlet]="listFragment()"
+                [ngTemplateOutletContext]="{ $implicit: _storeList }" />
+  }
+  <div class="grow flex flex-col justify-center">
+    <app-list-loader [pluralLabel]="_pluralLabel"
+                     [listSize]="_storeList.length"
+                     [loadError]="_store.loadError()"
+                     [loading]="_store.loading()" [hasMore]="_store.hasMore()"
+                     (loaded)="_store.load()" [autoLoadMore]="autoLoadMore()">
+      @if (!_storeList.length) {
+      <p class="text-muted-color text-center my-4">
+        There are no {{ _pluralLabel.toLowerCase() }}.
+      </p>
+      }
+    </app-list-loader>
+  </div>
+</div>

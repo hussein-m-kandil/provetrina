@@ -1,0 +1,56 @@
+<ng-template #ul let-_profiles>
+  <ul aria-label="Profile list"
+      class="p-4 flex flex-wrap justify-center *:grow">
+    @for (_profile of _profiles; track _profile.id) {
+    <li class="p-2 w-full max-w-xs">
+      <article
+               class="h-full border border-surface rounded-xl p-6 text-sm text-muted-color *:space-x-2 *:truncate">
+        <h2 class="leading-tight">
+          <a [routerLink]="['/', _profile.username]">
+            <span class="text-color text-3xl font-bold">
+              {{ _profile.name }}
+            </span>
+            <br />
+            <span class="text-xs text-muted-color font-semibold">
+              @{{ _profile.username }}
+            </span>
+          </a>
+        </h2>
+        @if (_profile.title) {
+        <div class="mb-3 text-primary text-lg font-bold">
+          {{ _profile.title }}
+        </div>
+        }
+        @if (_profile.location) {
+        <p>
+          <span class="pi pi-map-marker text-sm"></span>
+          <span>{{ _profile.location }}</span>
+        </p>
+        }
+        @if (_profile.tel) {
+        <p>
+          <span class="pi pi-phone text-sm"></span>
+          <a href="tel:{{_profile.tel}}"
+             class="hover:underline">{{ _profile.tel }}</a>
+        </p>
+        }
+        @if (_profile.email) {
+        <p>
+          <span class="pi pi-envelope text-sm"></span>
+          <a href="mailto:{{_profile.email}}"
+             class="hover:underline">{{ _profile.email }}</a>
+        </p>
+        }
+        @if (_profile.bio) {
+        <p class="mt-3 text-base font-light">{{ _profile.bio }}</p>
+        }
+      </article>
+    </li>
+    }
+  </ul>
+</ng-template>
+
+<app-list [autoLoadMore]="true" [store]="profiles" [pluralLabel]="'Profiles'"
+          [listFragment]="ul" [searchable]="true"
+          [searchLabel]="'Search by name or job title'"
+          (searched)="search($event)" class="block min-h-screen" />

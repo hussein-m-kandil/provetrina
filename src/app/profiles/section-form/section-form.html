@@ -1,0 +1,22 @@
+<form class="space-y-4" [formGroup]="form" (ngSubmit)="submit()"
+      [aria-label]="createFormLabel()">
+  @if (form.errors?.['nonFieldError']; as _nonFieldError) {
+  <p-message severity="error" size="small" variant="simple"
+             styleClass="justify-center">
+    {{ _nonFieldError }}
+  </p-message>
+  }
+
+  @for (_attrs of fields; track $index) {
+  <app-form-field [type]="_attrs.type" [control]="_attrs.control"
+                  [inputId]="_attrs.id" [label]="_attrs.label" class="block" />
+  }
+
+  @let _disabled = form.disabled;
+  <div class="space-x-4 flex *:grow">
+    <p-button fluid type="button" severity="secondary" label="Cancel"
+              [disabled]="_disabled" (onClick)="canceled.emit()" />
+    <p-button fluid type="submit" severity="primary" label="Save"
+              [loading]="_disabled" [disabled]="_disabled" />
+  </div>
+</form>

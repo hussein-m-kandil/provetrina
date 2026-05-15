@@ -1,0 +1,17 @@
+<div class="bg-(--p-content-background) wrap-break-word hyphens-auto">
+  <header>
+    <app-mainbar />
+  </header>
+
+  <main>
+    @if (navigation.isInitial() || navigation.navigating() ||
+    navigation.error()) {
+    <app-navigator />
+    } @else {
+    <router-outlet />
+    }
+  </main>
+
+  <p-toast position="bottom-right" class="w-[calc(100%-40px)] max-w-md"
+           [pt]="{message: 'shadow-md'}" />
+</div>
